@@ -70,3 +70,8 @@ def user_logout(request):
     return redirect("login")
 
 ```
+
+improvement:
+
+1. logout conformation page
+2. success message on registration
