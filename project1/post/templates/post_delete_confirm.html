@@ -1,0 +1,220 @@
+{% extends "layout.html" %} {% load static %} {% block title %} Purge Record |
+Akward {% endblock title %} {% block content %}
+<style>
+  /* =========================================
+     GLOBAL PALETTE & RESET
+     ========================================= */
+  :root {
+    --khaki: #8a7650;
+    --sage: #8e977d;
+    --cream: #ece7d1;
+    --tan: #dbcea5;
+  }
+
+  /* Full-bleed wrapper */
+  .delete-wrapper {
+    position: relative;
+    width: 100vw;
+    min-height: calc(100vh - 80px);
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px;
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(rgba(219, 206, 165, 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 206, 165, 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    font-family: "Inter", sans-serif;
+  }
+
+  /* =========================================
+     WARNING CARD
+     ========================================= */
+  .vault-warning-card {
+    background: rgba(236, 231, 209, 0.85); /* Frosted Cream */
+    border: 1px solid rgba(138, 118, 80, 0.3); /* Khaki Border */
+    border-radius: 2rem;
+    padding: 3rem 2rem;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(138, 118, 80, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .vault-warning-card {
+      padding: 4rem;
+    }
+  }
+
+  /* Decorative Top Bar */
+  .card-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: var(--khaki);
+  }
+
+  .warning-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(138, 118, 80, 0.1);
+    border: 1px solid var(--khaki);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--khaki);
+    margin-bottom: 1.5rem;
+  }
+
+  .warning-title {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--khaki);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    margin: 0 0 1rem 0;
+    line-height: 1.1;
+  }
+
+  .warning-subtitle {
+    font-size: 0.95rem;
+    color: var(--sage);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+
+  /* =========================================
+     ACTION BUTTONS
+     ========================================= */
+  .action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 1.25rem 2rem;
+    border-radius: 100px;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 1. Edit Instead (Safe, Primary Focus) */
+  .btn-edit {
+    background: var(--tan);
+    color: var(--khaki);
+    border: 1px solid var(--tan);
+    box-shadow: 0 10px 20px rgba(138, 118, 80, 0.1);
+  }
+
+  .btn-edit:hover {
+    transform: translateY(-3px);
+    background: var(--khaki);
+    color: var(--cream);
+    border-color: var(--khaki);
+    box-shadow: 0 15px 30px rgba(138, 118, 80, 0.2);
+  }
+
+  /* 2. Delete Form Wrapper & Button (Destructive) */
+  .delete-form {
+    width: 100%;
+    margin: 0;
+  }
+
+  .btn-delete {
+    background: transparent;
+    color: var(--khaki);
+    border: 2px solid rgba(138, 118, 80, 0.3);
+  }
+
+  .btn-delete:hover {
+    background: rgba(138, 118, 80, 0.1);
+    border-color: var(--khaki);
+  }
+
+  /* 3. Go Back (Neutral) */
+  .btn-cancel {
+    color: var(--sage);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .btn-cancel:hover {
+    color: var(--khaki);
+    text-decoration: underline;
+  }
+</style>
+
+<div class="delete-wrapper">
+  <div class="vault-warning-card">
+    <div class="card-top-bar"></div>
+
+    <div class="warning-badge">
+      <div
+        style="
+          width: 6px;
+          height: 6px;
+          background: var(--khaki);
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+        "
+      ></div>
+      Destructive Action
+    </div>
+
+    <h1 class="warning-title">Delete Record?</h1>
+
+    <p class="warning-subtitle">
+      Once this confession is deleted from The Vault, it is permanently
+      scrubbed. There is no algorithmic recovery.
+    </p>
+
+    <div class="action-stack">
+      <a href="{% url 'post_edit' post.id %}" class="btn btn-edit"
+        >Wait, Edit Instead</a
+      >
+
+      <form method="post" class="delete-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-delete">Yes, Delete It</button>
+      </form>
+
+      <a href="{% url 'post_list' %}" class="btn-cancel">Abort & Go Back</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}

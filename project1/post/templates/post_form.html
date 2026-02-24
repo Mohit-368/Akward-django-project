@@ -1,0 +1,301 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+{% if form.instance.pk %}
+    Revise Record
+{% else %}
+    Submit Confession
+{% endif %}
+  | Akward
+{% endblock title %}
+
+{% block content %}
+<style>
+  :root {
+    --khaki: #8a7650;
+    --sage: #8e977d;
+    --cream: #ece7d1;
+    --tan: #dbcea5;
+  }
+
+  /* Full-bleed wrapper to match previous pages */
+  .form-wrapper {
+    position: relative;
+    width: 100vw;
+    min-height: calc(100vh - 80px);
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px; /* Negates layout.html top padding */
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(rgba(219, 206, 165, 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 206, 165, 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    font-family: "Inter", sans-serif;
+  }
+
+  /* =========================================
+     VAULT FORM CARD
+     ========================================= */
+  .vault-form-card {
+    background: rgba(236, 231, 209, 0.85); /* Frosted Cream */
+    border: 1px solid rgba(138, 118, 80, 0.2); /* Transparent Khaki */
+    border-radius: 2rem;
+    padding: 3rem 2rem;
+    width: 100%;
+    max-width: 600px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(138, 118, 80, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .vault-form-card {
+      padding: 4rem;
+    }
+  }
+
+  /* Decorative Top Bar */
+  .card-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(to right, var(--sage), var(--khaki));
+  }
+
+  /* Header Styles */
+  .form-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(219, 206, 165, 0.4);
+    border: 1px solid var(--tan);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--sage);
+    margin-bottom: 1.5rem;
+  }
+
+  .form-title {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--khaki);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.1;
+  }
+
+  .form-subtitle {
+    font-size: 0.95rem;
+    color: var(--sage);
+    margin-bottom: 2.5rem;
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     DJANGO FORM FIELD OVERRIDES
+     ========================================= */
+  /* Django renders fields wrapped in <p> tags by default */
+  .vault-form p {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Labels */
+  .vault-form label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--khaki);
+    margin-bottom: 0.5rem;
+  }
+
+  /* Inputs & Textareas */
+  .vault-form input[type="text"],
+  .vault-form input[type="email"],
+  .vault-form input[type="password"],
+  .vault-form textarea,
+  .vault-form select {
+    width: 100%;
+    background: rgba(
+      255,
+      255,
+      255,
+      0.5
+    ); /* Semi-transparent white inside the frosted card */
+    border: 2px solid rgba(142, 151, 125, 0.2); /* Soft sage border */
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    font-family: "Inter", sans-serif;
+    font-size: 1rem;
+    color: var(--khaki);
+    transition: all 0.3s ease;
+  }
+
+  /* File Input specific styling */
+  .vault-form input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(219, 206, 165, 0.2);
+    border: 2px dashed rgba(138, 118, 80, 0.3);
+    border-radius: 1rem;
+    color: var(--sage);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .vault-form input[type="file"]::file-selector-button {
+    background: var(--tan);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    color: var(--khaki);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.75rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .vault-form input[type="file"]::file-selector-button:hover {
+    background: var(--khaki);
+    color: var(--cream);
+  }
+
+  /* Focus States */
+  .vault-form input:focus,
+  .vault-form textarea:focus,
+  .vault-form select:focus {
+    outline: none;
+    border-color: var(--khaki);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 4px rgba(138, 118, 80, 0.1);
+  }
+
+  /* Help Text & Errors */
+  .helptext {
+    font-size: 0.75rem;
+    color: var(--sage);
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  .errorlist {
+    color: #b91c1c;
+    font-size: 0.85rem;
+    font-weight: 600;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1rem 0;
+  }
+
+  /* =========================================
+     BUTTONS
+     ========================================= */
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3rem;
+    align-items: center;
+  }
+
+  .submit-btn {
+    background: var(--khaki);
+    color: var(--cream);
+    border: none;
+    padding: 1.25rem 2.5rem;
+    border-radius: 100px;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(138, 118, 80, 0.2);
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(138, 118, 80, 0.3);
+    background: #736242; /* Slightly darker khaki */
+  }
+
+  .cancel-link {
+    color: var(--sage);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    padding: 1rem;
+    transition: color 0.2s ease;
+  }
+
+  .cancel-link:hover {
+    color: var(--khaki);
+  }
+</style>
+
+<div class="form-wrapper">
+  <div class="vault-form-card">
+    <div class="card-top-bar"></div>
+
+    <div class="form-badge">
+      <div
+        style="
+          width: 6px;
+          height: 6px;
+          background: var(--sage);
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+        "
+      ></div>
+      System Input Terminal
+    </div>
+
+    <h1 class="form-title">
+      {% if form.instance.pk %} Revise Record {% else %} Confess to the Vault {% endif %}
+    </h1>
+
+    <p class="form-subtitle">
+      {% if form.instance.pk %} Modifying an existing entry. All changes are
+      logged. {% else %} Anonymity is an illusion, but your secret is safe with
+      the algorithm. {% endif %}
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="vault-form">
+      {% csrf_token %} {{ form }}
+
+      <div class="form-actions">
+        <a href="{% url 'post_list' %}" class="cancel-link">Abort</a>
+
+        <button type="submit" class="submit-btn">
+          {% if form.instance.pk %} Update Entry {% else %} Initialize {% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

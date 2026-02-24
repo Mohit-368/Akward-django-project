@@ -1,0 +1,391 @@
+{% extends "layout.html" %} 
+{% load static %} 
+
+{% block title %} The Vault | Akward {% endblock title%} 
+
+{% block content %}
+<style>
+  /* =========================================
+     GLOBAL PALETTE & RESET
+     ========================================= */
+  :root {
+    --khaki: #8a7650;
+    --sage: #8e977d;
+    --cream: #ece7d1;
+    --tan: #dbcea5;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* Full-bleed wrapper with Architectural Grid */
+  .feed-wrapper {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px;
+    background-color: var(--cream);
+    background-image: 
+      linear-gradient(rgba(219, 206, 165, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 206, 165, 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    padding: 6rem 1.5rem 6rem 1.5rem;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .feed-wrapper { padding: 8rem 3rem 8rem 3rem; }
+  }
+
+  /* =========================================
+     VAULT TERMINAL HEADER
+     ========================================= */
+  .feed-header {
+    max-width: 1400px;
+    margin: 0 auto 4rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 10;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(219, 206, 165, 0.5);
+    border: 1px solid var(--tan);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--khaki);
+    margin-bottom: 1.5rem;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--sage);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(142, 151, 125, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(142, 151, 125, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(142, 151, 125, 0); }
+  }
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .header-content {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
+  .feed-title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    color: var(--khaki);
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    margin: 0;
+  }
+
+  .feed-title span {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--khaki);
+  }
+
+  .create-btn {
+    background-color: var(--khaki);
+    color: var(--cream);
+    padding: 1.25rem 2.5rem;
+    border-radius: 100px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 20px rgba(138, 118, 80, 0.2);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .create-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(138, 118, 80, 0.3);
+    background-color: #736242; /* Darker khaki */
+  }
+
+  /* =========================================
+     PINTEREST MASONRY GRID
+     ========================================= */
+  .masonry-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    column-count: 1;
+    column-gap: 2rem;
+  }
+
+  @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+  @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+  @media (min-width: 1536px) { .masonry-grid { column-count: 4; } }
+
+  /* =========================================
+     ENCRYPTED RECORD CARDS
+     ========================================= */
+  .post-card {
+    break-inside: avoid;
+    margin-bottom: 2rem;
+    background: rgba(236, 231, 209, 0.8); /* Frosted Cream */
+    border: 1px solid var(--tan);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: relative;
+    box-shadow: 0 10px 30px rgba(138, 118, 80, 0.05);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0; /* For scroll animation */
+    transform: translateY(30px);
+  }
+
+  .post-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .post-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--khaki);
+    box-shadow: 0 20px 40px rgba(138, 118, 80, 0.15);
+  }
+
+  /* Tech Top Bar inside Card */
+  .card-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(138, 118, 80, 0.1);
+    background: rgba(219, 206, 165, 0.3);
+  }
+
+  .post-author {
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--khaki);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .record-id {
+    font-family: monospace;
+    font-size: 0.65rem;
+    color: var(--sage);
+    letter-spacing: 2px;
+  }
+
+  /* Image Handling */
+  .post-img-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .post-img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    filter: sepia(30%) grayscale(40%);
+    transition: transform 0.6s ease, filter 0.6s ease;
+  }
+
+  .post-card:hover .post-img {
+    filter: sepia(0%) grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  /* Content area */
+  .post-content {
+    padding: 2rem 1.5rem;
+    position: relative;
+  }
+
+  /* Background Watermark */
+  .watermark {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(138, 118, 80, 0.04);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .post-text {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--khaki);
+    line-height: 1.3;
+    margin: 0;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 2;
+  }
+
+  .post-text::before {
+    content: '"';
+    color: var(--sage);
+    opacity: 0.5;
+  }
+
+  /* Actions (Terminal Style) */
+  .post-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(138, 118, 80, 0.2);
+    position: relative;
+    z-index: 2;
+  }
+
+  .action-link {
+    font-family: monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .edit-btn {
+    background: rgba(142, 151, 125, 0.1);
+    color: var(--sage);
+  }
+  .edit-btn:hover {
+    background: var(--sage);
+    color: var(--cream);
+  }
+
+  .delete-btn {
+    background: rgba(185, 28, 28, 0.05);
+    color: #b91c1c;
+  }
+  .delete-btn:hover {
+    background: #b91c1c;
+    color: var(--cream);
+  }
+
+  /* Empty State */
+  .no-post {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--sage);
+    font-weight: 600;
+    padding: 4rem;
+    grid-column: 1 / -1;
+    border: 1px dashed var(--tan);
+    border-radius: 1rem;
+  }
+</style>
+
+<div class="feed-wrapper">
+  
+  <div class="feed-header">
+    <div class="status-badge">
+      <div class="pulse-dot"></div>
+      System Active
+    </div>
+    <div class="header-content">
+      <h2 class="feed-title">The <span>Vault</span></h2>
+      <a class="create-btn" href="{% url 'post_create' %}">ADD CONFESSION</a>
+    </div>
+  </div>
+
+  <div class="masonry-grid">
+    
+    {% for post in posts %}
+    <div class="post-card scroll-reveal" style="transition-delay: {{ forloop.counter0|add:"0" }}00ms;">
+      
+      <div class="card-top-bar">
+        <span class="post-author">@{{ post.user.username }}</span>
+        
+      </div>
+
+      {% if post.photo %}
+      <div class="post-img-container">
+        <img src="{{ post.photo.url }}" alt="Post Image" class="post-img" />
+      </div>
+      {% endif %}
+
+      <div class="post-content">
+        <div class="watermark">“</div>
+        
+        <p class="post-text">
+          {{ post.text|truncatechars:13 }}
+        </p>
+        
+        {% if post.user == user %}
+        <div class="post-actions">
+          <a class="action-link edit-btn" href="{% url 'post_edit' post.id %}">[ EDIT ]</a>
+          <a class="action-link delete-btn" href="{% url 'post_delete' post.id %}">[ DELETE ]</a>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+    {% empty %}
+      <div class="no-post">The archive is empty. Awaiting inputs.</div>
+    {% endfor %}
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const cards = document.querySelectorAll('.post-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    });
+
+    cards.forEach(card => {
+      observer.observe(card);
+    });
+  });
+</script>
+{% endblock content%}

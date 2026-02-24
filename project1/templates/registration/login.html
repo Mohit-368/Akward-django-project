@@ -1,0 +1,249 @@
+{% extends "layout.html" %} {% load static %} {% block title %} Login | Akward
+{% endblock %} {% block content %}
+<style>
+  /* =========================================
+     GLOBAL PALETTE & RESET
+     ========================================= */
+  :root {
+    --khaki: #8a7650;
+    --sage: #8e977d;
+    --cream: #ece7d1;
+    --tan: #dbcea5;
+  }
+
+  /* Full-bleed wrapper matching the contact page */
+  .auth-wrapper {
+    position: relative;
+    width: 100vw;
+    min-height: calc(100vh - 80px);
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px;
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(rgba(219, 206, 165, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 206, 165, 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 1.5rem;
+    font-family: "Inter", sans-serif;
+    overflow: hidden;
+  }
+
+  /* Background Glow */
+  .ambient-glow {
+    position: absolute;
+    top: -10%;
+    right: 10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(
+      circle,
+      rgba(138, 118, 80, 0.08) 0%,
+      transparent 60%
+    );
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  /* =========================================
+     FROSTED LOGIN CARD
+     ========================================= */
+  .auth-card {
+    background: rgba(255, 255, 255, 0.5); /* Frosted White */
+    border: 1px solid rgba(138, 118, 80, 0.15);
+    border-radius: 1.5rem;
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(138, 118, 80, 0.05);
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Badges & Typography (Matched to Contact Page) */
+  .auth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(219, 206, 165, 0.4);
+    border: 1px solid var(--tan);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--khaki);
+    margin-bottom: 1.5rem;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--sage);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(142, 151, 125, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(142, 151, 125, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(142, 151, 125, 0);
+    }
+  }
+
+  .auth-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--khaki);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .auth-title span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--khaki);
+  }
+
+  /* =========================================
+     FORM STYLING
+     ========================================= */
+  .auth-form p {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Making Django form labels match the .card-label style */
+  .auth-form label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--sage);
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-form input {
+    background: transparent;
+    border: 1px solid var(--tan);
+    border-radius: 1rem;
+    padding: 1rem;
+    font-size: 1rem;
+    color: var(--khaki);
+    font-family: "Inter", sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .auth-form input:focus {
+    outline: none;
+    border-color: var(--khaki);
+    box-shadow: 0 0 0 4px rgba(138, 118, 80, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Submit Button - Renamed to avoid navbar conflict */
+  .login-submit-btn {
+    width: 100%;
+    background: var(--khaki);
+    color: var(--cream);
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  .login-submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(138, 118, 80, 0.2);
+    background: #736242; /* Slightly darker khaki */
+  }
+
+  .auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--sage);
+  }
+
+  .auth-footer a {
+    color: var(--khaki);
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    margin-left: 0.25rem;
+    transition: color 0.3s ease;
+  }
+
+  .auth-footer a:hover {
+    color: #5c4e34;
+  }
+</style>
+
+<div class="auth-wrapper">
+  <div class="ambient-glow"></div>
+
+  <div class="auth-card scroll-reveal">
+    <div class="auth-badge">
+      <div class="pulse-dot"></div>
+      Secure Gateway
+    </div>
+
+    <h1 class="auth-title">WELCOME <br /><span>BACK.</span></h1>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit" class="login-submit-btn">Access Vault</button>
+    </form>
+
+    <div class="auth-footer">
+      New to Akward? <a href="{% url 'register' %}">Request Access</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const revealElements = document.querySelectorAll(".scroll-reveal");
+    revealElements.forEach((el) => {
+      el.style.opacity = 0;
+      el.style.transform = "translateY(30px)";
+      el.style.transition =
+        "opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)";
+
+      setTimeout(() => {
+        el.style.opacity = 1;
+        el.style.transform = "translateY(0)";
+      }, 100);
+    });
+  });
+</script>
+{% endblock content %}

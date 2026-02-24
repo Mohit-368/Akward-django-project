@@ -1,0 +1,764 @@
+{% extends 'layout.html' %} {% load static %} {% block title %} Akward | Embrace
+The Void {% endblock %} {% block content %}
+<style>
+  /* =========================================
+     KILL HORIZONTAL SCROLLING
+     ========================================= */
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* =========================================
+     HERO SECTION (STRICT PALETTE)
+     ========================================= */
+  .hero-container {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 80px);
+    min-height: 500px;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px;
+    background-color: #ece7d1; /* Base Cream */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Inter", sans-serif;
+  }
+
+  #akward-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+  .ui-layer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    width: 100%;
+    padding: 0 1.5rem;
+    pointer-events: none;
+  }
+
+  /* Typography */
+  .hero-title {
+    font-size: clamp(2.5rem, 12vw, 10rem);
+    font-weight: 900;
+    line-height: 0.85;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    margin: 0;
+    background: linear-gradient(
+      to right,
+      #8a7650 20%,
+      #8e977d 50%,
+      #8a7650 80%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 10px 20px rgba(138, 118, 80, 0.15));
+  }
+
+  .hero-title.hollow {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #8a7650;
+    background: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero-title.hollow {
+      -webkit-text-stroke: 2px #8a7650;
+    }
+  }
+
+  .hero-subtitle {
+    font-size: clamp(0.9rem, 2.5vw, 1.25rem);
+    color: #8e977d;
+    max-width: 600px;
+    margin: 1.5rem auto 2.5rem auto;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  .action-btn {
+    pointer-events: auto;
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: #dbcea5;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid #8a7650;
+    color: #8a7650;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 100px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(138, 118, 80, 0.1);
+  }
+
+  @media (min-width: 768px) {
+    .action-btn {
+      padding: 1.25rem 3.5rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .action-btn:hover {
+    background: #8a7650;
+    color: #ece7d1;
+    box-shadow: 0 10px 30px rgba(138, 118, 80, 0.3);
+    transform: scale(1.05);
+  }
+
+  .tech-label {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    font-size: 0.65rem;
+    color: #8e977d;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    z-index: 10;
+  }
+  @media (min-width: 768px) {
+    .tech-label {
+      bottom: 2rem;
+      left: 3rem;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+    }
+  }
+
+  /* =========================================
+     ABOUT SECTION (STRICT PALETTE)
+     ========================================= */
+  .about-wrapper {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-bottom: -48px;
+    background-color: #ece7d1;
+    color: #8a7650;
+    padding-bottom: 4rem;
+    font-family: "Inter", sans-serif;
+    overflow: hidden;
+  }
+
+  .ticker-tape {
+    width: 100%;
+    background: #dbcea5;
+    color: #8a7650;
+    padding: 10px 0;
+    overflow: hidden;
+    display: flex;
+    white-space: nowrap;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(138, 118, 80, 0.2);
+    border-bottom: 1px solid rgba(138, 118, 80, 0.2);
+  }
+  @media (min-width: 768px) {
+    .ticker-tape {
+      font-size: 0.85rem;
+      padding: 12px 0;
+    }
+  }
+
+  .ticker-content {
+    animation: scroll-left 25s linear infinite;
+    display: flex;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .ticker-content {
+      gap: 3rem;
+    }
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .vault-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2rem 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .vault-container {
+      padding: 6rem 2rem 3rem 2rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vault-container {
+      padding: 8rem 2rem 4rem 2rem;
+    }
+  }
+
+  /* --- NEW SPLIT HEADER LAYOUT --- */
+  .vault-header-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+  @media (min-width: 1024px) {
+    .vault-header-wrapper {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6rem;
+    }
+  }
+
+  .vault-header-text {
+    max-width: 650px;
+  }
+
+  .vault-title {
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    color: #8a7650;
+  }
+  .vault-text {
+    font-size: 1rem;
+    color: #8e977d;
+    line-height: 1.6;
+  }
+  @media (min-width: 768px) {
+    .vault-text {
+      font-size: 1.25rem;
+      line-height: 1.8;
+    }
+  }
+
+  /* --- RIGHT SIDE: SYSTEM DIAGNOSTICS UI --- */
+  .vault-metrics {
+    background: rgba(219, 206, 165, 0.2);
+    border: 1px solid rgba(138, 118, 80, 0.25);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(138, 118, 80, 0.05);
+    overflow: hidden;
+  }
+
+  .metric-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px dashed rgba(138, 118, 80, 0.3);
+    padding-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-header-title {
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #8a7650;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(138, 118, 80, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(138, 118, 80, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(138, 118, 80, 0);
+    }
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #8e977d;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .metric-row .val {
+    color: #8a7650;
+    font-weight: 800;
+  }
+
+  /* Decorative SVG Seal */
+  .rotating-seal {
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 150px;
+    height: 150px;
+    animation: spin-slow 15s linear infinite;
+    opacity: 0.15; /* Subtle watermark */
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes spin-slow {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Asymmetric Bento Grid */
+  .vault-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .vault-grid {
+      gap: 2rem;
+    }
+  }
+
+  .vault-card {
+    background: rgba(219, 206, 165, 0.3);
+    border: 1px solid rgba(138, 118, 80, 0.2);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition:
+      transform 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease;
+    opacity: 0;
+    transform: translateY(40px);
+    grid-column: span 12;
+    box-shadow: 0 4px 20px rgba(138, 118, 80, 0.05);
+  }
+  .vault-card:hover {
+    border-color: #8a7650;
+    transform: translateY(-8px) !important;
+    box-shadow: 0 15px 30px rgba(138, 118, 80, 0.15);
+  }
+  @media (min-width: 768px) {
+    .vault-card {
+      padding: 2.5rem;
+      border-radius: 2rem;
+    }
+    .card-left {
+      grid-column: span 12;
+    }
+    .card-right {
+      grid-column: span 12;
+    }
+    .card-third {
+      grid-column: span 6;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vault-card {
+      padding: 3rem;
+    }
+    .card-left {
+      grid-column: span 7;
+    }
+    .card-right {
+      grid-column: span 5;
+    }
+    .card-third {
+      grid-column: span 4;
+    }
+  }
+
+  .card-number {
+    font-family: monospace;
+    color: #8e977d;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    font-weight: 600;
+  }
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #8a7650;
+  }
+  @media (min-width: 768px) {
+    .card-number {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card-title {
+      font-size: 2rem;
+    }
+  }
+
+  .card-desc {
+    color: #8e977d;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  @media (min-width: 768px) {
+    .card-desc {
+      font-size: 1rem;
+    }
+  }
+
+  .reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.8s ease-out,
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
+
+<div class="hero-container" id="hero-wrap">
+  <canvas id="akward-canvas"></canvas>
+
+  <div class="ui-layer">
+    <h1 class="hero-title">CRINGE</h1>
+    <h1 class="hero-title hollow">COLLECTIVE.</h1>
+
+    <p class="hero-subtitle">
+      A digital sanctuary for humanity's most awkward moments. We engineered an
+      interactive space where your embarrassing stories become high art.
+    </p>
+
+    <a href="{% url 'post_create'%}" class="action-btn">Submit A Memory</a>
+  </div>
+
+  <div class="tech-label">Particle Engine Active // V.3.1</div>
+</div>
+
+<div class="about-wrapper" id="about1">
+  <div class="ticker-tape">
+    <div class="ticker-content">
+      <span>// ACCESSING ARCHIVE</span><span>// ZERO JUDGMENT ZONE</span
+      ><span>// 100% ORGANIC CRINGE</span
+      ><span>// END THE PERFECTION ILLUSION</span>
+      <span>// ACCESSING ARCHIVE</span><span>// ZERO JUDGMENT ZONE</span
+      ><span>// 100% ORGANIC CRINGE</span
+      ><span>// END THE PERFECTION ILLUSION</span>
+      <span>// ACCESSING ARCHIVE</span><span>// ZERO JUDGMENT ZONE</span
+      ><span>// 100% ORGANIC CRINGE</span
+      ><span>// END THE PERFECTION ILLUSION</span>
+    </div>
+  </div>
+
+  <div class="vault-container">
+    <div class="vault-header-wrapper">
+      <div class="vault-header-text scroll-reveal">
+        <h2 class="vault-title">
+          Why we built <br /><span style="color: #8e977d">The Vault.</span>
+        </h2>
+        <p class="vault-text">
+          Because perfection is a digital illusion. We got tired of curated
+          feeds showing fake highlights. The real human experience is stumbling
+          over your words, waving at strangers who weren't waving at you, and
+          replying "you too" when the waiter tells you to enjoy your food.
+        </p>
+      </div>
+
+      <div class="vault-metrics scroll-reveal" style="transition-delay: 0.2s">
+        <div class="metric-header">
+          <div
+            style="
+              width: 8px;
+              height: 8px;
+              background: #8a7650;
+              border-radius: 50%;
+              animation: pulse 2s infinite;
+            "
+          ></div>
+          <span class="metric-header-title">System Diagnostics</span>
+        </div>
+
+        <div class="metric-row">
+          <span>ENCRYPTION</span>
+          <span class="val">ACTIVE</span>
+        </div>
+        <div class="metric-row">
+          <span>JUDGMENT</span>
+          <span class="val">0.00%</span>
+        </div>
+        <div class="metric-row">
+          <span>ANONYMITY</span>
+          <span class="val">MAXIMUM</span>
+        </div>
+        <div class="metric-row">
+          <span>STORAGE</span>
+          <span class="val">EXPANDING</span>
+        </div>
+
+        <svg class="rotating-seal" viewBox="0 0 100 100">
+          <defs>
+            <path
+              id="textCircle"
+              d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+            />
+          </defs>
+          <text
+            font-family="monospace"
+            font-size="8.5"
+            fill="#8a7650"
+            font-weight="bold"
+            letter-spacing="1.5"
+          >
+            <textPath href="#textCircle">
+              SECURE ARCHIVE • RAW TRUTH • SECURE ARCHIVE •
+            </textPath>
+          </text>
+        </svg>
+      </div>
+    </div>
+    <div class="vault-grid">
+      <div
+        class="vault-card card-left scroll-reveal"
+        style="transition-delay: 0.1s"
+      >
+        <span class="card-number">[ PHASE 01 ]</span>
+        <h3 class="card-title">Confess into the Void.</h3>
+        <p class="card-desc">
+          Dump your most agonizingly awkward memories into our encrypted
+          archive. Do it anonymously, or own it with your chest. The moment you
+          type it out, the cringe loses its power.
+        </p>
+      </div>
+
+      <div
+        class="vault-card card-right scroll-reveal"
+        style="
+          background: linear-gradient(
+            135deg,
+            rgba(219, 206, 165, 0.5) 0%,
+            rgba(236, 231, 209, 0.8) 100%
+          );
+          transition-delay: 0.2s;
+        "
+      >
+        <span class="card-number">[ PHASE 02 ]</span>
+        <h3 class="card-title">Resonate.</h3>
+        <p class="card-desc">
+          Watch as hundreds of others hit the "I've Done This Too" metric. The
+          realization that everyone is faking their confidence is the ultimate
+          cure for embarrassment.
+        </p>
+      </div>
+
+      <div
+        class="vault-card card-third scroll-reveal"
+        style="transition-delay: 0.3s"
+      >
+        <span class="card-number">[ RULE 01 ]</span>
+        <h3 class="card-title" style="font-size: 1.5rem">Zero Toxicity.</h3>
+        <p class="card-desc">
+          We laugh <em>with</em> you, not at you. The architecture of this
+          platform actively rejects algorithms that feed on negativity.
+        </p>
+      </div>
+
+      <div
+        class="vault-card card-third scroll-reveal"
+        style="transition-delay: 0.4s"
+      >
+        <span class="card-number">[ RULE 02 ]</span>
+        <h3 class="card-title" style="font-size: 1.5rem">Pure Signal.</h3>
+        <p class="card-desc">
+          No influencers. No ads disguised as content. Just raw, unfiltered,
+          deeply uncomfortable human truths.
+        </p>
+      </div>
+
+      <div
+        class="vault-card card-third scroll-reveal"
+        style="transition-delay: 0.5s"
+      >
+        <span class="card-number">[ RULE 03 ]</span>
+        <h3 class="card-title" style="font-size: 1.5rem">Total Amnesty.</h3>
+        <p class="card-desc">
+          What is posted in the Vault, stays in the Vault. Forgive yourself for
+          what you did in 2014.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. Particle Engine Setup
+    const canvas = document.getElementById("akward-canvas");
+    const ctx = canvas.getContext("2d");
+    const container = document.getElementById("hero-wrap");
+
+    let width, height;
+    let particles = [];
+
+    function resize() {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    let mouse = { x: null, y: null, radius: 150 };
+
+    canvas.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+    canvas.addEventListener("mouseleave", () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.touches[0].clientX - rect.left;
+      mouse.y = e.touches[0].clientY - rect.top;
+    });
+    canvas.addEventListener("touchend", () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 3 + 1;
+        this.baseX = this.x;
+        this.baseY = this.y;
+        this.density = Math.random() * 30 + 5;
+        const colors = ["#8A7650", "#8E977D", "#DBCEA5"];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.alpha = Math.random() * 0.5 + 0.1;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+      }
+
+      update() {
+        if (mouse.x != null) {
+          let dx = mouse.x - this.x;
+          let dy = mouse.y - this.y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+          let forceDirectionX = dx / distance;
+          let forceDirectionY = dy / distance;
+          let maxDistance = mouse.radius;
+          let force = (maxDistance - distance) / maxDistance;
+          let directionX = forceDirectionX * force * this.density;
+          let directionY = forceDirectionY * force * this.density;
+
+          if (distance < mouse.radius) {
+            this.x -= directionX;
+            this.y -= directionY;
+          } else {
+            if (this.x !== this.baseX) {
+              this.x -= (this.x - this.baseX) / 20;
+            }
+            if (this.y !== this.baseY) {
+              this.y -= (this.y - this.baseY) / 20;
+            }
+          }
+        } else {
+          if (this.x !== this.baseX) {
+            this.x -= (this.x - this.baseX) / 20;
+          }
+          if (this.y !== this.baseY) {
+            this.y -= (this.y - this.baseY) / 20;
+          }
+        }
+
+        this.baseX += (Math.random() - 0.5) * 0.5;
+        this.baseY += (Math.random() - 0.5) * 0.5;
+        this.draw();
+      }
+    }
+
+    function init() {
+      particles = [];
+      let numberOfParticles = (width * height) / 4000;
+      for (let i = 0; i < numberOfParticles; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+
+    // 2. Scroll Reveal Observer
+    const revealElements = document.querySelectorAll(".scroll-reveal");
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { root: null, threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+    );
+    revealElements.forEach((el) => {
+      revealObserver.observe(el);
+    });
+  });
+</script>
+{% endblock %}

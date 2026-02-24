@@ -1,0 +1,467 @@
+{% extends 'layout.html' %} {% load static %} {% block title %} Privacy Policy |
+Akward {% endblock %} {% block content %}
+<style>
+  /* =========================================
+     GLOBAL & PALETTE SETUP
+     ========================================= */
+  :root {
+    --khaki: #8a7650;
+    --sage: #8e977d;
+    --cream: #ece7d1;
+    --tan: #dbcea5;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+    scroll-behavior: smooth;
+  }
+
+  .privacy-wrapper {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px; /* Negates layout.html top padding */
+    background-color: var(--cream);
+    color: var(--khaki);
+    font-family: "Inter", sans-serif;
+    min-height: 100vh;
+    padding-bottom: 6rem;
+  }
+
+  /* =========================================
+     ARCHITECTURAL HEADER
+     ========================================= */
+  .privacy-header {
+    position: relative;
+    padding: 8rem 2rem 6rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(138, 118, 80, 0.2);
+    /* Subtle drafting grid background */
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(rgba(219, 206, 165, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 206, 165, 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(219, 206, 165, 0.5); /* Frosted Tan */
+    border: 1px solid var(--tan);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--khaki);
+    margin-bottom: 2rem;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--sage);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(142, 151, 125, 0.7);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(142, 151, 125, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(142, 151, 125, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(142, 151, 125, 0);
+    }
+  }
+
+  .privacy-title {
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--khaki);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  /* =========================================
+     TL;DR BENTO GRID (The Upgrade)
+     ========================================= */
+  .tldr-container {
+    max-width: 1200px;
+    margin: -3rem auto 4rem auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .tldr-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tldr-card {
+    background: rgba(236, 231, 209, 0.85); /* Frosted Cream */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--tan);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(138, 118, 80, 0.08);
+    transition: transform 0.3s ease;
+  }
+
+  .tldr-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--khaki);
+  }
+
+  .tldr-icon {
+    font-size: 2rem;
+    color: var(--sage);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .tldr-card h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--khaki);
+    margin-bottom: 0.75rem;
+  }
+
+  .tldr-card p {
+    font-size: 0.9rem;
+    color: var(--sage);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* =========================================
+     MAIN DOCUMENT LAYOUT
+     ========================================= */
+  .doc-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .doc-container {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 5rem;
+    }
+  }
+
+  /* Sticky Sidebar */
+  .doc-sidebar {
+    width: 100%;
+    position: sticky;
+    top: 100px;
+    background: transparent;
+  }
+
+  @media (min-width: 1024px) {
+    .doc-sidebar {
+      width: 280px;
+      flex-shrink: 0;
+    }
+  }
+
+  .doc-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-left: 2px solid rgba(219, 206, 165, 0.5); /* Tan line */
+  }
+
+  .doc-sidebar a {
+    text-decoration: none;
+    color: var(--sage);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    display: block;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .doc-sidebar a::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background: var(--khaki);
+    transform: scaleY(0);
+    transition: transform 0.2s ease;
+    transform-origin: left top;
+  }
+
+  .doc-sidebar a:hover {
+    color: var(--khaki);
+    background: rgba(219, 206, 165, 0.2);
+  }
+
+  .doc-sidebar a:hover::before {
+    transform: scaleY(1);
+  }
+
+  /* Content Cards (Upgrade from flat text) */
+  .doc-content {
+    flex-grow: 1;
+    max-width: 800px;
+  }
+
+  .policy-card {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(138, 118, 80, 0.15);
+    border-radius: 2rem;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    scroll-margin-top: 120px;
+  }
+
+  .policy-card h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--khaki);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .policy-card h2 span {
+    font-family: monospace;
+    font-size: 1rem;
+    color: var(--sage);
+    background: var(--tan);
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+
+  .policy-card p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--sage);
+    margin-bottom: 1.5rem;
+  }
+
+  .policy-card ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .policy-card li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--sage);
+    margin-bottom: 0.75rem;
+  }
+  .policy-card li::marker {
+    color: var(--khaki);
+  }
+  .policy-card strong {
+    color: var(--khaki);
+  }
+</style>
+
+<div class="privacy-wrapper">
+  <header class="privacy-header">
+    <div class="header-badge">
+      <div class="pulse-dot"></div>
+      Data Protection Vault
+    </div>
+    <h1 class="privacy-title">Privacy Policy</h1>
+    <p style="color: var(--sage); font-weight: 600; letter-spacing: 1px">
+      EFFECTIVE DATE: FEBRUARY 2026
+    </p>
+  </header>
+
+  <div class="tldr-container">
+    <div class="tldr-card">
+      <span class="tldr-icon">👁️</span>
+      <h3>Zero Profiling</h3>
+      <p>
+        We do not track you across the web. The cringe you share here stays
+        here. No algorithmic profiling, no creepy retargeting ads.
+      </p>
+    </div>
+    <div class="tldr-card">
+      <span class="tldr-icon">🎭</span>
+      <h3>Anonymity is Sacred</h3>
+      <p>
+        If you choose to post an embarrassing moment anonymously, we strip the
+        metadata. Your identity remains protected in the Vault.
+      </p>
+    </div>
+    <div class="tldr-card">
+      <span class="tldr-icon">🗑️</span>
+      <h3>Right to Erase</h3>
+      <p>
+        Regret confessing that you waved at a stranger? You have the absolute
+        right to delete your data at any time. When it's gone, it's gone.
+      </p>
+    </div>
+  </div>
+
+  <div class="doc-container">
+    <aside class="doc-sidebar">
+      <p
+        style="
+          font-size: 0.75rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: var(--khaki);
+          margin-bottom: 1rem;
+        "
+      >
+        Index
+      </p>
+      <ul>
+        <li><a href="#collection">1. Data We Collect</a></li>
+        <li><a href="#usage">2. How We Use It</a></li>
+        <li><a href="#sharing">3. Data Sharing</a></li>
+        <li><a href="#cookies">4. Cookies & Tracking</a></li>
+        <li><a href="#rights">5. Your Rights</a></li>
+        <li><a href="#contact">6. Contact Data Officer</a></li>
+      </ul>
+    </aside>
+
+    <main class="doc-content">
+      <div id="collection" class="policy-card">
+        <h2><span>01</span> Data We Collect</h2>
+        <p>
+          At Akward, we believe in data minimalism. We only collect what is
+          absolutely necessary to keep the Vault running smoothly.
+        </p>
+        <ul>
+          <li>
+            <strong>Account Data:</strong> If you register, we collect your
+            email address and a chosen username.
+          </li>
+          <li>
+            <strong>Submission Data:</strong> The text, timestamps, and
+            resonance metrics (likes/comments) of the awkward moments you post.
+          </li>
+          <li>
+            <strong>Technical Data:</strong> Basic log data such as IP address
+            and browser type, kept strictly for security and anti-spam measures.
+          </li>
+        </ul>
+      </div>
+
+      <div id="usage" class="policy-card">
+        <h2><span>02</span> How We Use It</h2>
+        <p>
+          Your data is used to provide the Akward experience. We do not use your
+          stories to train third-party AI models without explicit opt-in.
+        </p>
+        <ul>
+          <li>To display your posts in the community feed.</li>
+          <li>To moderate content and maintain the "Zero Toxicity" rule.</li>
+          <li>To securely verify your login credentials.</li>
+        </ul>
+      </div>
+
+      <div id="sharing" class="policy-card">
+        <h2><span>03</span> Data Sharing</h2>
+        <p>
+          Let’s be incredibly clear:
+          <strong
+            >We do not sell your personal data or your embarrassing stories to
+            data brokers or advertising networks.</strong
+          >
+        </p>
+        <p>
+          We only share data in the following highly restricted circumstances:
+        </p>
+        <ul>
+          <li>
+            With essential service providers (like our secure hosting servers).
+          </li>
+          <li>If required by a valid legal subpoena.</li>
+          <li>To protect the physical safety of our users or the public.</li>
+        </ul>
+      </div>
+
+      <div id="cookies" class="policy-card">
+        <h2><span>04</span> Cookies & Tracking</h2>
+        <p>
+          We use essential cookies purely to keep you logged in and to prevent
+          cross-site request forgery (security). We do not deploy third-party
+          tracking pixels to follow you around the internet.
+        </p>
+      </div>
+
+      <div id="rights" class="policy-card">
+        <h2><span>05</span> Your Rights</h2>
+        <p>
+          You have total control over your digital footprint within our walls.
+          Under GDPR and CCPA guidelines, you have the right to:
+        </p>
+        <ul>
+          <li>Request a full export of all data tied to your account.</li>
+          <li>Modify or delete any post instantly.</li>
+          <li>
+            Permanently delete your entire account, scrubbing your email and
+            posts from our active databases.
+          </li>
+        </ul>
+      </div>
+
+      <div
+        id="contact"
+        class="policy-card"
+        style="background: rgba(219, 206, 165, 0.2); border-color: var(--khaki)"
+      >
+        <h2><span>06</span> Contact the DPO</h2>
+        <p>
+          If you have questions about how we handle your data, or wish to
+          exercise your rights, contact our Data Protection Officer directly.
+        </p>
+        <p
+          style="
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--khaki);
+            font-weight: bold;
+            margin-top: 1rem;
+          "
+        >
+          privacy@akward.com
+        </p>
+      </div>
+    </main>
+  </div>
+</div>
+{% endblock %}

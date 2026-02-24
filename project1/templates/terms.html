@@ -1,0 +1,332 @@
+{% extends 'layout.html' %} {% load static %} {% block title %} Terms of Service
+| Akward {% endblock %} {% block content %}
+<style>
+  /* =========================================
+     LEGAL PAGE STYLES (STRICT PALETTE)
+     ========================================= */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .legal-wrapper {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px; /* Negates layout.html top padding */
+    background-color: #ece7d1; /* Base Cream */
+    color: #8a7650; /* Khaki/Brown */
+    font-family: "Inter", sans-serif;
+    min-height: 100vh;
+  }
+
+  /* Header Section */
+  .legal-header {
+    background: #dbcea5; /* Light Tan */
+    padding: 6rem 2rem 4rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(138, 118, 80, 0.2);
+  }
+
+  .legal-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    color: #8a7650;
+    text-transform: uppercase;
+  }
+
+  .legal-meta {
+    font-size: 0.9rem;
+    color: #8e977d; /* Sage */
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Main Layout */
+  .legal-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  @media (min-width: 1024px) {
+    .legal-container {
+      flex-direction: row;
+      align-items: flex-start;
+      padding: 6rem 2rem;
+    }
+  }
+
+  /* Sticky Sidebar Navigation */
+  .legal-sidebar {
+    width: 100%;
+    position: sticky;
+    top: 100px; /* Sits below your 80px navbar */
+    background: rgba(236, 231, 209, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(138, 118, 80, 0.2);
+    box-shadow: 0 4px 20px rgba(138, 118, 80, 0.05);
+  }
+
+  @media (min-width: 1024px) {
+    .legal-sidebar {
+      width: 300px;
+      flex-shrink: 0;
+    }
+  }
+
+  .sidebar-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #8e977d;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sidebar-nav a {
+    text-decoration: none;
+    color: #8a7650;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .sidebar-nav a:hover {
+    color: #8e977d;
+    transform: translateX(5px);
+  }
+
+  /* Document Content */
+  .legal-content {
+    flex-grow: 1;
+    max-width: 800px;
+  }
+
+  .legal-section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 120px; /* Prevents navbar from covering the title when scrolling */
+  }
+
+  .legal-section h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #8a7650;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(138, 118, 80, 0.1);
+  }
+
+  .legal-section h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #8a7650;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-section p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #8e977d; /* Sage for softer reading */
+    margin-bottom: 1.5rem;
+  }
+
+  .legal-section ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .legal-section li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #8e977d;
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-section li::marker {
+    color: #8a7650; /* Brown bullets */
+  }
+
+  .legal-section strong {
+    color: #8a7650;
+    font-weight: 700;
+  }
+
+  /* Contact Highlight Box */
+  .contact-box {
+    background: #dbcea5;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(138, 118, 80, 0.2);
+    margin-top: 2rem;
+  }
+
+  .contact-box p {
+    color: #8a7650;
+    margin: 0;
+  }
+</style>
+
+<div class="legal-wrapper">
+  <header class="legal-header">
+    <h1 class="legal-title">Terms of Service</h1>
+    <p class="legal-meta">Last Updated: February 2026 // Version 1.0</p>
+  </header>
+
+  <div class="legal-container">
+    <aside class="legal-sidebar">
+      <div class="sidebar-title">Document Directory</div>
+      <ul class="sidebar-nav">
+        <li><a href="#agreement">01. Agreement to Terms</a></li>
+        <li><a href="#community">02. Community Guidelines</a></li>
+        <li><a href="#content">03. User Content & Rights</a></li>
+        <li><a href="#liability">04. Limitation of Liability</a></li>
+        <li><a href="#privacy">05. Privacy & Data</a></li>
+        <li><a href="#contact">06. Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <main class="legal-content">
+      <section id="agreement" class="legal-section">
+        <h2>01. Agreement to Terms</h2>
+        <p>
+          Welcome to <strong>Akward</strong>. These Terms of Service constitute
+          a legally binding agreement made between you, whether personally or on
+          behalf of an entity ("you") and Akward ("we," "us" or "our"),
+          concerning your access to and use of the Akward platform and
+          community.
+        </p>
+        <p>
+          By accessing the platform, you agree that you have read, understood,
+          and agree to be bound by all of these Terms of Service. If you do not
+          agree with all of these Terms of Service, then you are expressly
+          prohibited from using the site and you must discontinue use
+          immediately.
+        </p>
+      </section>
+
+      <section id="community" class="legal-section">
+        <h2>02. Community Guidelines (The Vault Rules)</h2>
+        <p>
+          Akward is designed to be a digital sanctuary for sharing embarrassing,
+          cringe-worthy, and awkward moments. To maintain the integrity of "The
+          Vault," users must strictly adhere to the following behavioral
+          standards:
+        </p>
+        <ul>
+          <li>
+            <strong>Zero Toxicity:</strong> Harassment, bullying, doxxing, or
+            malicious ridicule of other users' submissions is strictly
+            prohibited. We laugh <em>with</em> each other, not at each other.
+          </li>
+          <li>
+            <strong>No Hate Speech:</strong> Any content promoting violence,
+            discrimination, or hatred against individuals or groups will result
+            in immediate termination of access.
+          </li>
+          <li>
+            <strong>Respect Anonymity:</strong> Do not attempt to de-anonymize
+            or reveal the personal identities of users who have chosen to post
+            their stories anonymously.
+          </li>
+        </ul>
+        <p>
+          We reserve the right to remove any content or terminate any account
+          that violates these guidelines at our sole discretion, without prior
+          notice.
+        </p>
+      </section>
+
+      <section id="content" class="legal-section">
+        <h2>03. User Content & Rights</h2>
+        <h3>Your Ownership</h3>
+        <p>
+          You retain full ownership of all intellectual property rights in the
+          content you submit, post, or display on or through Akward. What
+          belongs to you stays yours.
+        </p>
+        <h3>Our License to Use</h3>
+        <p>
+          By posting content to the Vault, you grant us a worldwide,
+          non-exclusive, royalty-free license (with the right to sublicense) to
+          use, copy, reproduce, process, adapt, modify, publish, transmit,
+          display, and distribute such content in any and all media or
+          distribution methods currently known or developed in the future.
+        </p>
+      </section>
+
+      <section id="liability" class="legal-section">
+        <h2>04. Limitation of Liability</h2>
+        <p>
+          Akward is provided on an "as is" and "as available" basis. We do not
+          guarantee that the platform will always be safe, secure, or
+          error-free, or that it will function without disruptions, delays, or
+          imperfections.
+        </p>
+        <p>
+          To the fullest extent permitted by law, Akward, our managing members,
+          shareholders, employees, affiliates, and agents shall not be liable
+          for any indirect, incidental, special, consequential, or punitive
+          damages, or any loss of profits or revenues, whether incurred directly
+          or indirectly, or any loss of data, use, goodwill, or other intangible
+          losses resulting from your access to or use of the platform.
+        </p>
+      </section>
+
+      <section id="privacy" class="legal-section">
+        <h2>05. Privacy & Data</h2>
+        <p>
+          We care about data privacy and security. Please review our Privacy
+          Policy to understand how we collect, use, and share your information.
+          By using Akward, you agree to be bound by our Privacy Policy, which is
+          incorporated into these Terms of Service.
+        </p>
+        <p>
+          Be advised that while we offer anonymous posting features, no internet
+          transmission is ever completely secure or error-free. You post your
+          "cringe" at your own discretion.
+        </p>
+      </section>
+
+      <section id="contact" class="legal-section">
+        <h2>06. Contact Us</h2>
+        <p>
+          In order to resolve a complaint regarding the Site or to receive
+          further information regarding use of the Site, please contact us.
+        </p>
+
+        <div class="contact-box">
+          <p><strong>Akward Community Operations</strong></p>
+          <p>Email: legal@akward.com</p>
+          <p>Response Time: 24 - 48 Hours</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,464 @@
+{% load static %} {% load tailwind_tags %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% tailwind_css %}
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{% block title %} Akward | Community {% endblock %}</title>
+
+    <style>
+      /* =========================================
+         GLOBAL SETTINGS
+         ========================================= */
+      html,
+      body {
+        /* Removed overflow-x: hidden from here */
+        max-width: 100%;
+        scroll-behavior: smooth;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        font-family: "Inter", sans-serif;
+      }
+      body::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Base Background */
+      .bg-skin-mesh {
+        background-color: #ece7d1;
+        background-image:
+          radial-gradient(
+            at 0% 0%,
+            rgba(138, 118, 80, 0.08) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 100% 100%,
+            rgba(142, 151, 125, 0.1) 0px,
+            transparent 50%
+          );
+      }
+
+      /* Container to manage overflow without breaking sticky nav */
+      .site-wrapper {
+        overflow-x: hidden;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* =========================================
+         ELITE DARK NAVBAR
+         ========================================= */
+      .vault-nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        width: 100%;
+        height: 80px;
+        background-color: #2d2a26; /* Exact match to footer */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .nav-inner {
+        width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      @media (min-width: 1024px) {
+        .nav-inner {
+          padding: 0 3rem;
+        }
+      }
+
+      /* Logo */
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+      }
+      .logo-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #8a7650, #8e977d);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .nav-logo:hover .logo-mark {
+        transform: rotate(15deg) scale(1.1);
+      }
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
+        color: #ffffff;
+      }
+      .logo-text span {
+        color: #8a7650;
+      }
+
+      /* Primary Links */
+      .nav-links {
+        display: none;
+        align-items: center;
+        gap: 2.5rem;
+      }
+      @media (min-width: 768px) {
+        .nav-links {
+          display: flex;
+        }
+      }
+
+      .nav-link {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        position: relative;
+        padding-bottom: 4px;
+      }
+      .nav-link:hover {
+        color: #ffffff;
+      }
+
+      /* Sliding Underline */
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #8a7650;
+        transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 2px;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* Auth & Actions */
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      @media (min-width: 768px) {
+        .nav-actions {
+          gap: 1.5rem;
+        }
+      }
+
+      .auth-btn {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        font-family: inherit; /* Inherit font for buttons */
+        cursor: pointer;
+      }
+      @media (min-width: 768px) {
+        .auth-btn {
+          padding: 0.5rem 1.25rem;
+        }
+      }
+
+      /* Login / Logout Buttons */
+      .btn-outline {
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: transparent;
+      }
+      .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      .user-greeting {
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background-color: #8e977d;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      /* Main CTA */
+      .btn-create {
+        background-color: #8a7650;
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        padding: 0.6rem 1.25rem;
+        border-radius: 50px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      @media (min-width: 768px) {
+        .btn-create {
+          padding: 0.6rem 1.5rem;
+        }
+      }
+
+      .btn-create:hover {
+        transform: translateY(-2px);
+        background-color: #736242;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      }
+    </style>
+  </head>
+
+  <body class="bg-skin-mesh text-[#2d2a26] antialiased selection:bg-white/30">
+    <div class="site-wrapper">
+      <nav class="vault-nav">
+        <div class="nav-inner">
+          <a href="/" class="nav-logo">
+            <div class="logo-mark"></div>
+            <div class="logo-text">Ak<span>ward</span></div>
+          </a>
+
+          <div class="nav-links">
+            <a href="{% url 'post_list'%}" class="nav-link">Home</a>
+            <a href="{% url 'about' %}#about1" class="nav-link">About</a>
+            <a href="/contact" class="nav-link">Contact</a>
+          </div>
+
+          <div class="nav-actions">
+            {% if user.is_authenticated %}
+            <div class="user-greeting">
+              <div class="live-dot"></div>
+              @{{ user.username }}
+            </div>
+
+            <form
+              method="post"
+              action="{% url 'logout' %}"
+              style="margin: 0; display: inline-block"
+            >
+              {% csrf_token %}
+              <button type="submit" class="auth-btn btn-outline">Logout</button>
+            </form>
+
+            {% else %}
+            <a
+              href="{% url 'login' %}"
+              class="auth-btn btn-outline"
+              style="border: none"
+              >Login</a
+            >
+            <a href="{% url 'register' %}" class="auth-btn btn-outline"
+              >Register</a
+            >
+            {% endif %}
+
+            <a href="{% url 'post_create' %}" class="btn-create">
+              <span style="font-size: 1rem; line-height: 0">+</span> Post
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <main class="flex-grow w-full max-w-[1600px] mx-auto py-12">
+        <div class="transition-all duration-500 ease-in-out">
+          {% block content %}
+          <div
+            class="h-96 border rounded-3xl flex flex-col items-center justify-center bg-white/40 backdrop-blur-md shadow-lg mx-6"
+            style="border-color: rgba(142, 121, 81, 0.1)"
+          >
+            <p class="text-2xl font-bold" style="color: #8e7951">
+              Main Content Block
+            </p>
+            <p class="text-sm font-medium uppercase tracking-widest opacity-60">
+              Hex-Ready Layout
+            </p>
+          </div>
+          {% endblock %}
+        </div>
+      </main>
+
+      <footer
+        class="w-full border-t border-white/5 text-white shadow-[0_-20px_50px_rgba(0,0,0,0.2)]"
+        style="background-color: #2d2a26"
+      >
+        <div class="w-full px-6 lg:px-12 py-12">
+          <div class="flex flex-col lg:flex-row justify-between gap-10">
+            <div class="max-w-sm">
+              <a href="/" class="group flex items-center gap-2 mb-4">
+                <div
+                  class="h-7 w-7 rounded-lg group-hover:rotate-12 transition-transform duration-300"
+                  style="
+                    background: linear-gradient(to top right, #8e7951, #929d85);
+                  "
+                ></div>
+                <h1
+                  class="text-xl font-black tracking-tighter text-white uppercase"
+                >
+                  Ak<span style="color: #8e7951">ward</span>
+                </h1>
+              </a>
+              <p class="text-white/50 leading-relaxed text-sm mb-5">
+                An organic community space rooted in premium design. Built for
+                authenticity and high-end aesthetics.
+              </p>
+
+              <div class="flex gap-4">
+                <a
+                  href="https:/www.x.com"
+                  class="p-2.5 rounded-xl border border-white/10 bg-white/5 text-white hover:bg-white transition-all duration-300 active:scale-90"
+                  style="color: #f1ebe0"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"
+                    />
+                  </svg>
+                </a>
+                <a
+                  href="https:/www.instagram.com"
+                  class="p-2.5 rounded-xl border border-white/10 bg-white/5 text-white hover:bg-white transition-all duration-300 active:scale-90"
+                  style="color: #f1ebe0"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 lg:gap-16">
+              <div>
+                <h3
+                  class="text-white font-bold mb-4 text-xs tracking-widest uppercase"
+                >
+                  Platform
+                </h3>
+                <ul class="space-y-3 text-white/40 text-sm font-medium">
+                  <li>
+                    <a
+                      href="{% url 'post_list' %}"
+                      class="hover:text-white transition-colors"
+                      style="--tw-hover-text: #8e7951"
+                      >Discover</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="hover:text-white transition-colors"
+                      style="--tw-hover-text: #8e7951"
+                      >Trending</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3
+                  class="text-white font-bold mb-4 text-xs tracking-widest uppercase"
+                >
+                  Company
+                </h3>
+                <ul class="space-y-3 text-white/40 text-sm font-medium">
+                  <li>
+                    <a
+                      href="{% url 'privacy' %}"
+                      class="hover:text-white transition-colors"
+                      style="--tw-hover-text: #8e7951"
+                      >Privacy</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="{% url 'terms' %}"
+                      class="hover:text-white transition-colors"
+                      style="--tw-hover-text: #8e7951"
+                      >Terms</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="max-w-sm w-full">
+              <h3
+                class="text-white font-bold mb-4 text-xs tracking-widest uppercase"
+              >
+                Stay Grounded
+              </h3>
+              <div class="relative">
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-2.5 text-sm text-white focus:outline-none transition-all"
+                />
+                <button
+                  class="absolute right-1.5 top-1.5 px-4 py-1.5 text-white text-xs font-bold rounded-lg transition-all active:scale-95"
+                  style="background-color: #8e7951"
+                >
+                  Join
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <p class="text-white/20 text-xs">
+              &copy; 2026 Akward Community. Natural Aesthetics.
+            </p>
+            <div class="flex gap-8 text-white/20 text-xs">
+              <a href="{% url 'terms' %}" class="hover:text-white transition"
+                >Terms of Service</a
+              >
+              <a href="{% url 'privacy' %}" class="hover:text-white transition"
+                >Privacy Policy</a
+              >
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
