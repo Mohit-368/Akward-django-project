@@ -1,5 +1,7 @@
 from django.shortcuts import render  
 # render ka use template (html file) ko browser me dikhane ke liye hota h
+from django.contrib import messages
+
 
 from .models import Post  
 # yaha hum apna Post model import kar rahe h taaki database se data nikal sake
@@ -132,6 +134,11 @@ def register(request):
             user.set_password(form.cleaned_data['password1'])
             user.save()
             login(request,user)
+            messages.success(
+                request,
+                f"Welcome {user.username}! Your account is ready."
+            )
+
             return redirect('post_list')
 
     else:

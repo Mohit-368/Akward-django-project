@@ -4,6 +4,7 @@
 {% block title %} The Vault | Akward {% endblock title%} 
 
 {% block content %}
+
 <style>
   /* =========================================
      GLOBAL PALETTE & RESET
@@ -313,7 +314,41 @@
     border: 1px dashed var(--tan);
     border-radius: 1rem;
   }
+
+  .custom-alert {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.alert-success {
+  background-color: #8e977d;
+  color: white;
+}
+
+.alert-error {
+  background-color: #b91c1c;
+  color: white;
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
 </style>
+{% if messages %}
+    {% for message in messages %}
+        <div class="custom-alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
 <div class="feed-wrapper">
   
@@ -385,6 +420,19 @@
 
     cards.forEach(card => {
       observer.observe(card);
+    });
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    const alerts = document.querySelectorAll(".custom-alert");
+
+    alerts.forEach(alert => {
+      setTimeout(() => {
+        alert.classList.add("fade-out");
+
+        setTimeout(() => {
+          alert.remove();
+        }, 500);
+      }, 2000);
     });
   });
 </script>

@@ -16,12 +16,12 @@
 
     <style>
       /* =========================================
-         GLOBAL SETTINGS
-         ========================================= */
+   GLOBAL SETTINGS
+   ========================================= */
       html,
       body {
-        /* Removed overflow-x: hidden from here */
         max-width: 100%;
+        overflow-x: clip; /* <-- THE FIX: Stops X-axis scroll, keeps sticky nav working */
         scroll-behavior: smooth;
         -ms-overflow-style: none;
         scrollbar-width: none;
@@ -29,6 +29,15 @@
       }
       body::-webkit-scrollbar {
         display: none;
+      }
+
+      /* Container to manage overflow without breaking sticky nav */
+      .site-wrapper {
+        padding-top: 80px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
       }
 
       /* Base Background */
@@ -60,12 +69,13 @@
          ELITE DARK NAVBAR
          ========================================= */
       .vault-nav {
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
         z-index: 50;
         width: 100%;
         height: 80px;
-        background-color: #2d2a26; /* Exact match to footer */
+        background-color: #2d2a26;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         display: flex;
         align-items: center;
