@@ -125,7 +125,7 @@ def post_delete(request,post_id):
     # agar GET request h to pehle confirmation page dikhayenge
     return render(request ,'post_delete_confirm.html', {'post':post})
 
-
+#adding message
 def register(request):
     if request.method=='POST':
         form= UserRegistrationForm(request.POST)
