@@ -7,4 +7,10 @@ urlpatterns = [
     path('create/',views.post_create,name='post_create'),
     path('<int:post_id>/delete/',views.post_delete,name='post_delete'),
     path('register/',views.register,name='register'),
+    path("profile/<str:username>/", views.profile_view, name="profile"),
+    path("profile/<str:username>/edit/", views.profile_edit, name="profile_edit"),
+    path('<int:post_id>/', views.post_detail, name='post_detail'),
+    path("resend-otp/", views.resend_otp, name="resend_otp"),
+    path("verify-otp/", views.verify_otp, name="verify_otp"),
+
 ]

@@ -1,0 +1,491 @@
+{% extends "layout.html" %} {% load static %} {% block title %} @{{
+profile_user.username }} | Dossier {% endblock title %} {% block content %}
+<style>
+  /* =========================================
+     GLOBAL PALETTE & RESET
+     ========================================= */
+  :root {
+    --khaki: #8a7650;
+    --sage: #8e977d;
+    --cream: #ece7d1;
+    --tan: #dbcea5;
+  }
+
+  /* Full-bleed wrapper with Architectural Grid */
+  .profile-wrapper {
+    position: relative;
+    width: 100vw;
+    min-height: calc(100vh - 80px);
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -48px;
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(rgba(219, 206, 165, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 206, 165, 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    padding: 6rem 1.5rem;
+    font-family: "Inter", sans-serif;
+  }
+
+  @media (min-width: 768px) {
+    .profile-wrapper {
+      padding: 8rem 3rem;
+    }
+  }
+
+  .profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* =========================================
+     TERMINAL HEADER
+     ========================================= */
+  .terminal-header {
+    margin-bottom: 3rem;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(219, 206, 165, 0.5);
+    border: 1px solid var(--tan);
+    border-radius: 50px;
+    font-family: monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--khaki);
+    margin-bottom: 1rem;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--sage);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(142, 151, 125, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(142, 151, 125, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(142, 151, 125, 0);
+    }
+  }
+
+  .page-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: var(--khaki);
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    margin: 0;
+  }
+
+  .page-title span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--khaki);
+  }
+
+  /* =========================================
+     DOSSIER ID CARD
+     ========================================= */
+  .dossier-card {
+    background: rgba(236, 231, 209, 0.85);
+    border: 1px solid var(--tan);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(138, 118, 80, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 5rem;
+  }
+
+  @media (min-width: 768px) {
+    .dossier-card {
+      flex-direction: row;
+      align-items: flex-start;
+      padding: 4rem;
+    }
+  }
+
+  .watermark {
+    position: absolute;
+    bottom: -20px;
+    right: -10px;
+    font-size: 8rem;
+    font-weight: 900;
+    color: rgba(138, 118, 80, 0.03);
+    pointer-events: none;
+    line-height: 1;
+    text-transform: uppercase;
+    transform: rotate(-5deg);
+  }
+
+  /* Avatar Section */
+  .avatar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  .avatar-container {
+    width: 160px;
+    height: 160px;
+    border-radius: 1.5rem;
+    padding: 6px;
+    border: 2px dashed var(--sage);
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .avatar-container {
+      width: 220px;
+      height: 220px;
+    }
+  }
+
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    background-color: var(--tan);
+    filter: sepia(20%) contrast(95%);
+  }
+
+  /* Info Section */
+  .dossier-info {
+    flex-grow: 1;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .username {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--khaki);
+    margin: 0 0 2rem 0;
+    letter-spacing: -0.03em;
+  }
+
+  /* Field Groups */
+  .field-group {
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(138, 118, 80, 0.2);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .field-label {
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--sage);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .field-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--khaki);
+    font-weight: 500;
+  }
+
+  .tagline-text {
+    font-family: monospace;
+    font-size: 1rem;
+  }
+
+  /* Edit Links (Terminal Style) */
+  .edit-link {
+    font-family: monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--tan);
+    background: var(--khaki);
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .edit-link:hover {
+    background: #736242;
+    color: var(--cream);
+  }
+
+  /* =========================================
+     ARCHIVE LOG (Masonry Grid)
+     ========================================= */
+  .log-header {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--khaki);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .log-header::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background: rgba(138, 118, 80, 0.2);
+  }
+
+  .masonry-grid {
+    column-count: 1;
+    column-gap: 2rem;
+  }
+  @media (min-width: 640px) {
+    .masonry-grid {
+      column-count: 2;
+    }
+  }
+  @media (min-width: 1024px) {
+    .masonry-grid {
+      column-count: 3;
+    }
+  }
+
+  .post-card {
+    break-inside: avoid;
+    margin-bottom: 2rem;
+    background: rgba(236, 231, 209, 0.6);
+    border: 1px solid rgba(138, 118, 80, 0.15);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 20px rgba(138, 118, 80, 0.05);
+    transition: all 0.3s ease;
+  }
+  .post-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--khaki);
+    box-shadow: 0 15px 30px rgba(138, 118, 80, 0.15);
+  }
+
+  .post-content {
+    padding: 1.5rem;
+  }
+  .post-text {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--khaki);
+    line-height: 1.4;
+    margin: 0;
+  }
+  .post-text::before {
+    content: '"';
+    color: var(--sage);
+    opacity: 0.5;
+  }
+
+  /* Post Actions inside Archive Log */
+  .post-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(138, 118, 80, 0.2);
+  }
+
+  .action-btn {
+    font-family: monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .edit-post-btn {
+    background: rgba(142, 151, 125, 0.1);
+    color: var(--sage);
+  }
+  .edit-post-btn:hover {
+    background: var(--sage);
+    color: var(--cream);
+  }
+
+  .delete-post-btn {
+    background: rgba(185, 28, 28, 0.05);
+    color: #b91c1c;
+  }
+  .delete-post-btn:hover {
+    background: #b91c1c;
+    color: var(--cream);
+  }
+
+  .no-post {
+    text-align: center;
+    font-size: 1rem;
+    font-family: monospace;
+    color: var(--sage);
+    padding: 3rem;
+    border: 1px dashed var(--tan);
+    border-radius: 1rem;
+    grid-column: 1 / -1;
+  }
+</style>
+
+<div class="profile-wrapper">
+  <div class="profile-container">
+    <div class="terminal-header">
+      <div class="status-badge">
+        <div class="pulse-dot"></div>
+        Subject File Found
+      </div>
+      <h1 class="page-title">Operative <span>Dossier</span></h1>
+    </div>
+
+    <div class="dossier-card">
+      <div class="watermark">CLASSIFIED</div>
+
+      <div class="avatar-column">
+        <div class="avatar-container">
+          {% if profile.profile_pic %}
+          <img
+            src="{{ profile.profile_pic.url }}"
+            alt="@{{ profile_user.username }}"
+            class="avatar-img"
+          />
+          {% else %}
+          <div
+            class="avatar-img"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 4rem;
+              color: var(--sage);
+              background: var(--cream);
+            "
+          >
+            ?
+          </div>
+          {% endif %}
+        </div>
+
+        {% if request.user == profile.user %}
+        <a
+          href="{% url 'profile_edit' profile_user.username%}"
+          class="edit-link"
+          >[ REVISE IMAGE ]</a
+        >
+        {% endif %}
+      </div>
+
+      <div class="dossier-info">
+        <h2 class="username">@{{ profile_user.username }}</h2>
+
+        <div class="field-group">
+          <div class="field-header">
+            <span class="field-label">Current Status / Tagline</span>
+            {% if request.user == profile.user %}
+            <a
+              href="{% url 'profile_edit' profile_user.username%}"
+              class="edit-link"
+              >[ REVISE ]</a
+            >
+            {% endif %}
+          </div>
+          <div class="field-content tagline-text">
+            // {% if profile.tagline %}{{ profile.tagline }}{% else %}No
+            designation provided.{% endif %}
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-header">
+            <span class="field-label">Subject Background / Bio</span>
+            {% if request.user == profile.user %}
+            <a
+              href="{% url 'profile_edit' profile_user.username%}"
+              class="edit-link"
+              >[ REVISE ]</a
+            >
+            {% endif %}
+          </div>
+          <div class="field-content">
+            {% if profile.bio %} {{ profile.bio }} {% else %} //Edit your Bio {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-header">Archive Log</div>
+
+    <div class="masonry-grid">
+      {% for post in posts %}
+      <div class="post-card">
+        <div class="post-content">
+          <p class="post-text">{{ post.title }}</p>
+
+          {% if request.user == post.user %}
+          <div class="post-actions">
+            <a
+              class="action-btn edit-post-btn"
+              href="{% url 'post_edit' post.id %}"
+              >[ REVISE ]</a
+            >
+            <a
+              class="action-btn delete-post-btn"
+              href="{% url 'post_delete' post.id %}"
+              >[ PURGE ]</a
+            >
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="no-post">
+        No records found. The subject has maintained perfect composure... so
+        far.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

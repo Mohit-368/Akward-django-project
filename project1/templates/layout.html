@@ -4,6 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/static/image/img.png" />
 
     {% tailwind_css %}
 
@@ -15,13 +16,10 @@
     <title>{% block title %} Akward | Community {% endblock %}</title>
 
     <style>
-      /* =========================================
-   GLOBAL SETTINGS
-   ========================================= */
       html,
       body {
         max-width: 100%;
-        overflow-x: clip; /* <-- THE FIX: Stops X-axis scroll, keeps sticky nav working */
+        overflow-x: clip;
         scroll-behavior: smooth;
         -ms-overflow-style: none;
         scrollbar-width: none;
@@ -31,7 +29,6 @@
         display: none;
       }
 
-      /* Container to manage overflow without breaking sticky nav */
       .site-wrapper {
         padding-top: 80px;
         width: 100%;
@@ -40,7 +37,6 @@
         min-height: 100vh;
       }
 
-      /* Base Background */
       .bg-skin-mesh {
         background-color: #ece7d1;
         background-image:
@@ -275,10 +271,15 @@
 
           <div class="nav-actions">
             {% if user.is_authenticated %}
-            <div class="user-greeting">
+
+            <a
+              href="{% url 'profile' user.username %}"
+              class="user-greeting hover:text-white transition-colors duration-300"
+              style="text-decoration: none; cursor: pointer"
+            >
               <div class="live-dot"></div>
               @{{ user.username }}
-            </div>
+            </a>
 
             <form
               method="post"
