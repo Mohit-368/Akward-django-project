@@ -1,4 +1,4 @@
-# 😬 AwkwardPost — Share Your Most Awkward Moments
+#  AwkwardPost — Share Your Most Awkward Moments
 
 A full-stack **social media web application** built with Django where users can share, read, and engage with the most awkward moments of their lives. Features a complete authentication system with **email OTP verification**, automatic profile creation, session management, and full **CRUD operations** on posts.
 
