@@ -7,6 +7,7 @@ A full-stack **social media web application** built with Django where users can 
 ## 📋 Table of Contents
 
 - [About the Project](#about-the-project)
+- [Preview](#preview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -25,6 +26,19 @@ A full-stack **social media web application** built with Django where users can 
 ## 📌 About the Project
 
 **AwkwardPost** is a community-driven platform where people can anonymously or publicly share embarrassing, funny, or relatable moments from their lives. Built on Django's MTV architecture, the app handles everything from user registration with OTP-based email verification to full post management — all wrapped in a clean, responsive UI.
+
+---
+## 🖼️ Preview
+### Landing Page
+<img width="1916" height="1079" alt="Screenshot 2026-03-06 213712" src="https://github.com/user-attachments/assets/75247044-8ab5-4ced-8524-3bbeaa1a354a" />
+<img width="1919" height="1079" alt="Screenshot 2026-03-06 213725" src="https://github.com/user-attachments/assets/b1d4bd2d-209d-48c1-a49a-f53c980f1ddb" />
+<img width="1919" height="1079" alt="Screenshot 2026-03-06 213731" src="https://github.com/user-attachments/assets/fcc682df-9b83-4626-a3f4-6844eae1b9c4" />
+
+### Login Page
+<img width="1915" height="1074" alt="Screenshot 2026-03-06 213741" src="https://github.com/user-attachments/assets/dd365a34-3fc9-425f-85c4-13add4891e54" />
+
+### Register Page
+<img width="1918" height="1075" alt="Screenshot 2026-03-06 213757" src="https://github.com/user-attachments/assets/810ec4c6-66d5-40c3-97ab-4686d620e830" />
 
 ---
 
